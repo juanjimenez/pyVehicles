@@ -29,7 +29,11 @@ class Agent:
         self.traj = np.zeros((self.traj_capacity, 2))
         self.traj_index = 0
         self.traj_full = False
+<<<<<<< HEAD
         self.wrt_label = False
+=======
+        self.wrt_label = True
+>>>>>>> b862576c8ba539131f21fc3a3ceb760cd61724ec
 
         self.log_capacity = log_capacity
         self.log_pos = np.zeros((self.log_capacity, 2))
@@ -67,6 +71,13 @@ class Agent:
         text = font.render(str(self.label), True, (255,255,255)) 
         textRect = text.get_rect()
         textRect.center = (int(self.pos[0]), int(surf.get_height()-self.pos[1])) 
+        surf.blit(text,textRect)
+
+    def write_label(self,surf):
+        font = pygame.font.Font('freesansbold.ttf',15)
+        text = font.render(str(self.label), True, (255,255,255))
+        textRect = text.get_rect()
+        textRect.center = (int(self.pos[0]), int(surf.get_height()-self.pos[1]))
         surf.blit(text,textRect)
 
 class AgentSI(Agent):
@@ -152,7 +163,12 @@ class AgentUnicycle(Agent):
 
         tuple_of_corners = ((z1[0][0],yoff-z1[1][0]),(z2[0][0],yoff-z2[1][0]),(z3[0][0],yoff-z3[1][0]))
         pygame.draw.polygon(surf, self.color, tuple_of_corners)
+<<<<<<< HEAD
         
+=======
+
+
+>>>>>>> b862576c8ba539131f21fc3a3ceb760cd61724ec
         if(self.traj_draw):
             self.draw_trajectory(surf)
         if(self.wrt_label):
