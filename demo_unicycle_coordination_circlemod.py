@@ -39,7 +39,7 @@ for i in range(num_of_agents-1):
 
 desired_inter_vehicle_theta = (2*np.pi/num_of_agents)*np.ones((len(list_of_edges),1))
 theta_vehicles = np.zeros((num_of_agents,1))
-k_coord = 10
+k_coord = 50
 
 # Incidence matrix
 B = np.zeros((num_of_agents, len(list_of_edges)))
@@ -67,11 +67,11 @@ for agent in list_of_agents:
 ke_circle = 5e-5
 kd_circle = 60
 
-xo = 20 # Circle's center
-yo = 20
-ro = 5 # radius
+xo = 800 # Circle's center
+yo = 800
+ro = 50 # radius
 stop = 100;
-epsilon = 10;
+epsilon = 0.1;
 fun = 0;
 ck = np.array([xo,yo])
 
@@ -123,9 +123,9 @@ while(runsim):
     # print(positions_agents)
     # # Seria conveniente hacer que avance aca, porque creo que en caso contrario no me hace la animacion
     # # Voy a tener que separar los codigos, uno para calcular el gradiente 
-    if (la.norm(error_theta) < 0.6 and fun < 0.9999):
-        gradestfin=grad.computegradient(xo,yo,positions_agents,ro) # Gradiente.
-        fun = grad.function(xo,yo) # Gradiente.
+    if (la.norm(error_theta) < 0.6 and fun < 0.999999):
+        gradestfin=grad.computegradient(xo-CENTERX,yo-CENTERY,positions_agents,ro) # Gradiente.
+        fun = grad.function(xo-CENTERX,yo-CENTERY) # Gradiente.
         # positions_agents = positions_agents + epsilon*gradestfin
         ck = ck + epsilon*gradestfin # Avance.
         xo = ck[0]
@@ -133,7 +133,7 @@ while(runsim):
         stop = sum(abs(gradestfin))
         print("soy fun: ",fun)
         print("gradestfin: ",gradestfin)
-        print("soy stop: ",stop)
+        #print("soy stop: ",stop)
         print("soy ck: ",ck)
             
     # Guiding vector field
