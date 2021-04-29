@@ -64,21 +64,25 @@ import pygame
 #         break
 
 
-def function(x1,x2):
+def function(x1,x2,flag=0):
     # Pesos de la funcion (mirar hoja a parte que tengo como a y b) 
     Dimension = 2;
     H = np.zeros((Dimension, Dimension))
-    H[0,0]=1/(5000**2) #elevo al cuadrado para hacer más plana la gausiana 
-    H[1,1]=1/(5000**2) # y ver que pasa
+    H[0,0]=1/(1000**2) #elevo al cuadrado para hacer más plana la gausiana 
+    H[1,1]=1/(1000**2) # y ver que pasa
     # Funcion propiamente dicha
     f = np.exp(-(H[0,0]*x1**2 + H[1,1]*x2**2))  
     # Derivadas para comparar con el caso de que realmente exista el gradiente. 
     G = np.zeros((Dimension, 1))
     G[1,0]= -2*H[1,1]*x2*np.exp(-(H[0,0]*x1**2 + H[1,1]*x2**2)) #Primera derivada.
     G[0,0]= -2*H[0,0]*x1*np.exp(-(H[0,0]*x1**2 + H[1,1]*x2**2)) #Segunda derivada.
-    return f  
+    if flag ==0:
+        return f
+    else :
+        return G
     
-def computegradient(x1,x2,positions,D):
+    
+def computegradient(x1,x2,positions,D,c_gaussian):
     # xo = np.array([x1,x2]) 
     N = 4
     # a = 2*np.pi/N
@@ -97,8 +101,8 @@ def computegradient(x1,x2,positions,D):
         # Rotacion = np.array([[cphi, -sphi] , [sphi, cphi]])
         # ri = np.dot(Rotacion,np.transpose(ro)) 
         # fradios = np.exp(-(H[0,0]*(ri[0]+xo[0])**2 + H[1,1]*(ri[1]+xo[1])**2))  
-        fradios = function(positions[2*k],positions[2*k+1]) 
-        # print("soy fradios:",fradios)
+        fradios = function(positions[2*k]-c_gaussian[0],positions[2*k+1]-c_gaussian[1]) 
+        #print("soy fradios:",fradios)
         gradest[k,0] = fradios*(positions[2*k]-x1)
         gradest[k,1] = fradios*(positions[2*k+1]-x2)
         # print("soy gradest:",gradest)

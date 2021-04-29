@@ -6,7 +6,7 @@ sys.path.insert(1, './postproc')
 sys.path.insert(1, './vehicles')
 sys.path.insert(1, './algorithm')
 
-import pygame
+#import pygame
 import matplotlib.pyplot as pl
 import matplotlib.colors as mcolors
 import drawmisc
@@ -17,17 +17,20 @@ import gradiente as grad
 import logpostpro as lp
 import gvf
 
+import gauss_dist
+
 # setup simulation
 WIDTH = 1200
 HEIGHT = 700
 
 CENTERX = WIDTH/2
 CENTERY = WIDTH/2
+ctr_gaussian = [CENTERX,CENTERY]
 
 BLACK = (  0,   0,   0)
 
 size = [WIDTH, HEIGHT]
-screen = pygame.display.set_mode(size)
+#screen = pygame.display.set_mode(size)
 
 # Network
 num_of_agents = 4
@@ -58,7 +61,7 @@ for idx,edge in enumerate(list_of_edges):
 
 for i in range(num_of_agents):
     theta_o = np.pi - (2*np.pi)*np.random.rand(1);
-    list_of_agents.append(ag.AgentUnicycle(list(pygame.colordict.THECOLORS.items())[np.random.randint(0,657)][1], i, 1000*np.random.rand(2,1), 60*np.array([[np.cos(theta_o[0])],[np.sin(theta_o[0])]])))
+    list_of_agents.append(ag.AgentUnicycle([0,0,0], i, 1000*np.random.rand(2,1), 60*np.array([[np.cos(theta_o[0])],[np.sin(theta_o[0])]])))
 
 for agent in list_of_agents:
     agent.traj_draw = True
@@ -67,11 +70,11 @@ for agent in list_of_agents:
 ke_circle = 5e-5
 kd_circle = 60
 
-xo = 800 # Circle's center
-yo = 800
+xo = 600 # Circle's center
+yo = 0
 ro = 50 # radius
 stop = 100;
-epsilon = 0.1;
+epsilon = 20;
 fun = 0;
 ck = np.array([xo,yo])
 
@@ -79,15 +82,23 @@ ck = np.array([xo,yo])
 direction = -1 # Clock or counter-clock wise. This defines what angular velocity is positive
 
 # run simulation
-pygame.init()
-clock = pygame.time.Clock()
+#pygame.init()
+#clock = pygame.time.Clock()
 fps = 50
 dt = 1.0/fps
 time = 0
-
+counter = 0
 runsim = True
+
+pl.figure(1)
+x = np.arange(0.,900.,10)
+y = np.arange(0.,900.,10)
+[X,Y] = np.meshgrid(x,y)
+Z = gauss_dist.gausianillas(X,Y,ctr_gaussian,[1000/np.sqrt(2),1000/np.sqrt(2)],0,1)
+pl.contour(X,Y,Z,np.arange(0,1,0.01))
+pl.axis('equal')
 while(runsim):
-    screen.fill(BLACK)
+    #screen.fill(BLACK)
 
     us = 0 # We keep constant velocity
 
@@ -123,34 +134,60 @@ while(runsim):
     # print(positions_agents)
     # # Seria conveniente hacer que avance aca, porque creo que en caso contrario no me hace la animacion
     # # Voy a tener que separar los codigos, uno para calcular el gradiente 
-    if (la.norm(error_theta) < 0.6 and fun < 0.999999):
-        gradestfin=grad.computegradient(xo-CENTERX,yo-CENTERY,positions_agents,ro) # Gradiente.
-        fun = grad.function(xo-CENTERX,yo-CENTERY) # Gradiente.
+    if (la.norm(error_theta) < 0.2 and fun < 0.999):
+        gradestfin=grad.computegradient(xo,yo,positions_agents,ro,ctr_gaussian) # Gradiente.
+        fun = grad.function(xo-CENTERX,yo-CENTERY) # funcion.
+        grd = grad.function(xo-CENTERX,yo-CENTERY,1)
         # positions_agents = positions_agents + epsilon*gradestfin
         ck = ck + epsilon*gradestfin # Avance.
         xo = ck[0]
         yo = ck[1]
         stop = sum(abs(gradestfin))
-        print("soy fun: ",fun)
-        print("gradestfin: ",gradestfin)
+        
+ 
         #print("soy stop: ",stop)
-        print("soy ck: ",ck)
-            
+        
+       
+        
+        if counter%100==0:     
+         # print("soy ck: ",ck)
+         print("soy fun: ",fun)
+         # print("gradestfin: ",gradestfin)
+         # print('grd real',grd)
+         pl.figure(1)
+         pl.arrow(ck[0],ck[1],1000*gradestfin[0],1000*gradestfin[1],color='r')
+         pl.arrow(ck[0],ck[1],1000*grd[0,0],1000*grd[1,0],color='k')
+         
+         pl.figure(2)
+         pl.plot(counter,fun,'.r',markersize=1)         
+         
+         pl.figure(3)
+         pl.plot(counter,grd[0,0],'.r',markersize=1)
+         pl.plot(counter,grd[1,0],'.b',markersize=1)
+         pl.plot(counter,gradestfin[0],'.g',markersize=1)
+         pl.plot(counter,gradestfin[1],'.k',markersize=1)
+         pl.figure(4)
+         #pl.plot()
+         pl.plot(counter,gradestfin[0]-grd[0,0],'.r',markersize=1)
+         pl.plot(counter,gradestfin[1]-grd[1,0],'.b',markersize=1)
+        elif fun >= 0.999:
+            break
+        counter = counter + 1    
     # Guiding vector field
     for idx,agent in enumerate(list_of_agents):
-        agent.draw(screen)
+        #agent.draw(screen)
         circle_path = gvf.Path_gvf_circle(xo, yo, ro+dr[idx])
         ut = gvf.gvf_control_2D_unicycle(agent.pos, agent.vel, ke_circle, kd_circle, circle_path, direction)
         agent.step_dt(us, ut, dt)
 
-    clock.tick(fps)
-    pygame.display.flip()
+    #clock.tick(fps)
+    #pygame.display.flip()
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            endtime = pygame.time.get_ticks()
-            pygame.quit()
-            runsim = False
+    #for event in pygame.event.get():
+    #    if event.type == pygame.QUIT:
+    #        endtime = pygame.time.get_ticks()
+    #        pygame.quit()
+    #        runsim = False
 
 
 # Postprocessing

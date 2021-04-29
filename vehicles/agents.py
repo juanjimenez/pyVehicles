@@ -1,4 +1,4 @@
-import pygame
+#import pygame
 import numpy as np
 from numpy import linalg as la
 
@@ -55,20 +55,20 @@ class Agent:
             self.traj_full = True
             self.traj_index = 0
 
-    def draw_trajectory(self, surf):
-        if(self.traj_full):
-            for point in self.traj:
-                surf.set_at((int(point[0]), int(surf.get_height()-point[1])), self.color)
-        else:
-            for point in self.traj[:self.traj_index]:
-                surf.set_at((int(point[0]), int(surf.get_height()-point[1])), self.color)
+    # def draw_trajectory(self, surf):
+    #     if(self.traj_full):
+    #         for point in self.traj:
+    #             surf.set_at((int(point[0]), int(surf.get_height()-point[1])), self.color)
+    #     else:
+    #         for point in self.traj[:self.traj_index]:
+    #             surf.set_at((int(point[0]), int(surf.get_height()-point[1])), self.color)
 
-    def write_label(self,surf):
-        font = pygame.font.Font('freesansbold.ttf',15)
-        text = font.render(str(self.label), True, (255,255,255))
-        textRect = text.get_rect()
-        textRect.center = (int(self.pos[0]), int(surf.get_height()-self.pos[1]))
-        surf.blit(text,textRect)
+    # def write_label(self,surf):
+    #     font = pygame.font.Font('freesansbold.ttf',15)
+    #     text = font.render(str(self.label), True, (255,255,255))
+    #     textRect = text.get_rect()
+    #     textRect.center = (int(self.pos[0]), int(surf.get_height()-self.pos[1]))
+    #     surf.blit(text,textRect)
 
 class AgentSI(Agent):
     def step_dt(self, u, dt):
@@ -82,10 +82,10 @@ class AgentSI(Agent):
         if(self.log_index >= self.log_capacity):
             self.log_index = 0
 
-    def draw(self, surf):
-        pygame.draw.circle(surf, self.color, (int(self.pos[0][0]),int(surf.get_height()-self.pos[1][0])), 4, 0)
-        if(self.traj_draw):
-            self.draw_trajectory(surf)
+    # def draw(self, surf):
+    #     pygame.draw.circle(surf, self.color, (int(self.pos[0][0]),int(surf.get_height()-self.pos[1][0])), 4, 0)
+    #     if(self.traj_draw):
+    #         self.draw_trajectory(surf)
 
 
 class AgentDI(Agent):
@@ -102,10 +102,10 @@ class AgentDI(Agent):
         if(self.log_index >= self.log_capacity):
             self.log_index = 0
 
-    def draw(self, surf):
-        pygame.draw.circle(surf, self.color, (int(self.pos[0][0]),int(surf.get_height()-self.pos[1][0])), 4, 0)
-        if(self.traj_draw):
-            self.draw_trajectory(surf)
+    # def draw(self, surf):
+    #     pygame.draw.circle(surf, self.color, (int(self.pos[0][0]),int(surf.get_height()-self.pos[1][0])), 4, 0)
+    #     if(self.traj_draw):
+    #         self.draw_trajectory(surf)
 
 class AgentUnicycle(Agent):
     def __init__(self, color, label, pos=np.zeros(2), vel=np.zeros(2), traj_capacity=250, log_capacity=30000):
@@ -132,30 +132,30 @@ class AgentUnicycle(Agent):
         if(self.log_index >= self.log_capacity):
             self.log_index = 0
 
-    def draw(self, surf):
-        yaw = -self.theta
-        Rot = np.array([[np.cos(yaw), np.sin(yaw)],[-np.sin(yaw), np.cos(yaw)]])
+    # def draw(self, surf):
+    #     yaw = -self.theta
+    #     Rot = np.array([[np.cos(yaw), np.sin(yaw)],[-np.sin(yaw), np.cos(yaw)]])
 
-        apex = 80*np.pi/180
-        b = np.sqrt(2) / np.sin(apex)
-        a = b*np.sin(apex/2)
-        h = b*np.cos(apex/2)
+    #     apex = 80*np.pi/180
+    #     b = np.sqrt(2) / np.sin(apex)
+    #     a = b*np.sin(apex/2)
+    #     h = b*np.cos(apex/2)
 
-        z1 = np.array([[-a/2], [h*0.3]])
-        z2 = np.array([[-a/2], [-h*0.3]])
-        z3 = np.array([[h*0.6], [0]])
+    #     z1 = np.array([[-a/2], [h*0.3]])
+    #     z2 = np.array([[-a/2], [-h*0.3]])
+    #     z3 = np.array([[h*0.6], [0]])
 
-        z1 = self.pos + 20*Rot.dot(z1)
-        z2 = self.pos + 20*Rot.dot(z2)
-        z3 = self.pos + 20*Rot.dot(z3)
+    #     z1 = self.pos + 20*Rot.dot(z1)
+    #     z2 = self.pos + 20*Rot.dot(z2)
+    #     z3 = self.pos + 20*Rot.dot(z3)
 
-        yoff = surf.get_height()
+    #     yoff = surf.get_height()
 
-        tuple_of_corners = ((z1[0][0],yoff-z1[1][0]),(z2[0][0],yoff-z2[1][0]),(z3[0][0],yoff-z3[1][0]))
-        pygame.draw.polygon(surf, self.color, tuple_of_corners)
+    #     tuple_of_corners = ((z1[0][0],yoff-z1[1][0]),(z2[0][0],yoff-z2[1][0]),(z3[0][0],yoff-z3[1][0]))
+    #     pygame.draw.polygon(surf, self.color, tuple_of_corners)
 
 
-        if(self.traj_draw):
-            self.draw_trajectory(surf)
-        if(self.wrt_label):
-            self.write_label(surf)
+    #     if(self.traj_draw):
+    #         self.draw_trajectory(surf)
+    #     if(self.wrt_label):
+    #         self.write_label(surf)

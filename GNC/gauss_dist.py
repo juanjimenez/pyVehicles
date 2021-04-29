@@ -38,14 +38,17 @@ def gausianillas(x,y,c,s,th,p):
     R =np.array([x0,y0])
     Rot = np.array([[cth,sth],[-sth,cth]]) #matriz de rotación
     Q = np.array([[1/(2*s[0]**2),0],[0,1/(2*s[1]**2)]])
-    if x0.ndim > 1:       
-        Rrt = np.dot(Rot,R.transpose(1,0,2))        
+    print()
+    if R.ndim > 1:       
+        Rrt = np.dot(Rot,R.transpose(1,0,2))
+        H = np.sum(Rrt*np.dot(Q,Rrt.transpose(1,0,2)),axis=0)
+        V =p*np.exp(-H)        
     else:
         Rrt = np.dot(Rot,R)
-   
+        H = np.sum(Rrt*np.dot(Q,Rrt.T))
+        V =p*np.exp(-H)
     #V = p*np.exp(-(Rrt[0]**2/(2*s[0]**2)+Rrt[1]**2/(2*s[1]**2)))
-    H = np.sum(Rrt*np.dot(Q,Rrt.transpose(1,0,2)),axis=0)
-    V =p*np.exp(-H)
+    
     return V
 
 
