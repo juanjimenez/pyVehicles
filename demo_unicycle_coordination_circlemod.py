@@ -70,16 +70,16 @@ for agent in list_of_agents:
 ke_circle = 5e-5
 kd_circle = 60
 
-xo = 600 # Circle's center
+xo = 0 # Circle's center
 yo = 0
-ro = 50 # radius
+ro = 30 # radius
 stop = 100;
 epsilon = 20;
 fun = 0;
 ck = np.array([xo,yo])
 
 #
-direction = -1 # Clock or counter-clock wise. This defines what angular velocity is positive
+direction = 1 # Clock or counter-clock wise. This defines what angular velocity is positive
 
 # run simulation
 #pygame.init()
