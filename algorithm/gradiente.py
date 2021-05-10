@@ -12,7 +12,7 @@ import math
 from matplotlib import cm
 import random
 import time
-import pygame
+#import pygame
 
 # Cosas para graficar.
 # limite = 100

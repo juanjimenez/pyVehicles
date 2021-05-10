@@ -9,7 +9,7 @@ sys.path.insert(1, './algorithm')
 #import pygame
 import matplotlib.pyplot as pl
 import matplotlib.colors as mcolors
-import drawmisc
+#import drawmisc
 import agents as ag
 import numpy as np
 from numpy import linalg as la
